@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
+from models import db, User,Character,Planet,Vehicle,Favourite
 import json
 #from models import Person
 
@@ -68,6 +68,31 @@ def add_user():
     else:
         return jsonify({"msg":"el email ya existe"}), 400
 
+       #aqui van todos los characters 
+@app.route('/characters', methods=['GET'])
+def handle_characters():
+    all_characters = Character.query.all()
+    results = list(map(lambda item: item.serialize(),all_characters))
+    return jsonify(results), 200
+#aqui van todos los planets
+
+@app.route('/planets', methods=['GET'])
+def handle_planets():
+    all_planets = Planet.query.all()
+    results = list(map(lambda item: item.serialize(),all_planets))
+    return jsonify(results), 200
+
+@app.route('/vehicles', methods=['GET'])
+def handle_vehicles():
+    all_vehicles = Vehicle.query.all()
+    results = list(map(lambda item: item.serialize(),all_vehicles))
+    return jsonify(results), 200
+
+@app.route('/Favourites', methods=['GET'])
+def handle_favourites():
+    all_favourites = Favourite.query.all()
+    results = list(map(lambda item: item.serialize(),all_favourites))
+    return jsonify(results), 200
 
 # @app.route('/user/<int:user_id>', methods=['DELETE'])
 # def delete_user(user_id):
