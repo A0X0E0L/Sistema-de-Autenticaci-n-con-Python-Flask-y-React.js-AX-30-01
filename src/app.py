@@ -10,10 +10,18 @@ from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, User,Character,Planet,Vehicle,Favourites
 import json
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import JWTManager
+
 #from models import Person
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
+# Setup the Flask-JWT-Extended extension
+app.config["JWT_SECRET_KEY"] = "super-secret"  # Change this!
+jwt = JWTManager(app)
 
 db_url = os.getenv("DATABASE_URL")
 if db_url is not None:
@@ -38,6 +46,7 @@ def sitemap():
     return generate_sitemap(app)
 
 
+
 # Acá empezamos a trabajar, todo el resto sobre esta línea no se toca
 
 @app.route('/user', methods=['GET'])
@@ -46,14 +55,18 @@ def handle_allusers():
     results = list(map(lambda item: item.serialize(),allusers))
     return jsonify(results), 200
 
-
+#hay que identar con el tab
 @app.route('/user/<int:user_id>', methods=['GET'])
 def handle_one_user(user_id):
-    oneuser = User.query.filter_by(id=user_id).first()
-    if oneuser is None:
-        return jsonify({"msg":"usuario no existente"}), 404
-    else:
-        return jsonify(oneuser.serialize()), 200
+	oneuser = User.query.filter_by(id=user_id).first()
+	if oneuser is None:
+		return jsonify({"msg":"usuario no existente"}), 404
+	else:
+		return jsonify(oneuser.serialize()), 200
+
+	access_token = create_access_token(identity=user.id)
+	return jsonify({ "token": access_token, "user_id": user.id })
+
 
 @app.route('/user', methods=['POST'])
 def add_user():
