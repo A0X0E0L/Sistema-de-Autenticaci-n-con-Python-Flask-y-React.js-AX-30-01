@@ -84,22 +84,23 @@ def add_user():
 @app.route('/login', methods=['POST'])
 def login():
 	# lo que hace es obtener los datos que vienen del front
-    email=request.json.get("email", None)
+	email=request.json.get("email", None)
 	password=request.json.get("password", None)
 	# consulta en la base  de datos, 1er email es back end, 2do email es frontend, si encuentro el email guardo los datos de ese usuario y los retorna para que el haga lo que quiera. 
 	user = User.query.filter_by(email=email).first()
 	if user is None:
 		return jsonify({"msg":"el usuario no existe"}), 400
-	if username != user.username or password != user.password:
+		if email != user.email or password != user.password:	
+			
+				
 
-
-       #aqui van todos los characters 
 @app.route('/characters', methods=['GET'])
-def handle_characters():
-    all_characters = Character.query.all()
-    results = list(map(lambda item: item.serialize(),all_characters))
-    return jsonify(results), 200
-#aqui van todos los planets
+def handle_characters():									 
+	all_characters = Character.query.all()
+	results = list(map(lambda item: item.serialize(), all_characters))
+	return jsonify(results), 200
+
+
 
 @app.route('/planets', methods=['GET'])
 def handle_planets():
